@@ -1,0 +1,68 @@
+
+' ============================================================
+' Macro: FiltrarPolitica
+' Objetivo: Exibir linhas cujos títulos contenham palavras-chave
+' relacionadas à política.
+' Funcionamento: Analisa os títulos na coluna E e oculta as
+' linhas que não contêm nenhum dos termos definidos.
+' ============================================================
+
+Sub FiltrarPolitica()
+
+    ' Declaração das variáveis utilizadas na macro.
+    Dim UltimaLinha As Long
+    Dim ColTitulo As Long
+    Dim ColData As Long
+    Dim i As Long
+    Dim titulo As String
+    Dim dataVideo As String
+
+    ' Identifica o número da coluna E, onde estão os títulos.
+    ColTitulo = Range("E2").Column
+
+    ' Localiza a última linha preenchida na coluna de títulos.
+    UltimaLinha = Cells(Rows.Count, ColTitulo).End(xlUp).Row
+
+    ' Reexibe todas as linhas de dados antes de iniciar
+    ' uma nova filtragem, evitando ocultações anteriores.
+    Rows("2:" & UltimaLinha).Hidden = False
+
+    ' Percorre todas as linhas com dados, começando na linha 2
+    ' para preservar o cabeçalho da planilha.
+    For i = 2 To UltimaLinha
+
+        ' Converte o título para letras minúsculas,
+        ' facilitando a busca independentemente da capitalização.
+        titulo = LCase(Cells(i, ColTitulo).Value)
+
+        ' Verifica se o título contém pelo menos uma das
+        ' palavras-chave relacionadas à política.
+        If (InStr(titulo, "lula") > 0 _
+        Or InStr(titulo, "bolsonaro") > 0 _
+        Or InStr(titulo, "#eleições") > 0 _
+        Or InStr(titulo, "governo") > 0 _
+        Or InStr(titulo, "eleição") > 0 _
+        Or InStr(titulo, "eleições") > 0 _
+        Or InStr(titulo, "congresso") > 0 _
+        Or InStr(titulo, "senado") > 0 _
+        Or InStr(titulo, "câmara") > 0 _
+        Or InStr(titulo, "stf") > 0 _
+        Or InStr(titulo, "presidente") > 0 _
+        Or InStr(titulo, "ministro") > 0) Then
+
+            ' Se encontrar alguma palavra-chave,
+            ' mantém a linha visível.
+            Rows(i).Hidden = False
+
+        Else
+
+            ' Se nenhuma palavra-chave for encontrada,
+            ' oculta a linha correspondente.
+            Rows(i).Hidden = True
+
+        End If
+
+    Next i
+
+End Sub
+
