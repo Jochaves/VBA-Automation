@@ -1,0 +1,62 @@
+Sub UnirArquivosExcel()
+
+    ' Declarar as variáveis utilizadas na consolidação dos arquivos
+    Dim wsDestino As Worksheet    ' Planilha que receberá os dados consolidados
+    Dim PastaArquivos As String   ' Caminho da pasta que contém os arquivos Excel
+    Dim Arquivo As String         ' Nome do arquivo encontrado na pasta
+    Dim wbOrigem As Workbook      ' Pasta de trabalho que será aberta para leitura
+    Dim wsOrigem As Worksheet     ' Planilha de onde os dados serão extraídos
+    Dim UltimaLinha As Long       ' Última linha preenchida na planilha de origem
+    Dim LinhaDestino As Long      ' Próxima linha disponível para inserir os dados
+
+    ' Definir o caminho da pasta que contém os arquivos Excel
+    ' Substitua o texto pelo caminho desejado, mantendo a barra invertida no final
+    PastaArquivos = "direcione o caminho"
+
+    ' Definir a primeira planilha do arquivo atual como destino da consolidação
+    Set wsDestino = ThisWorkbook.Sheets(1)
+
+    ' Identificar a próxima linha disponível na coluna A da planilha de destino
+    LinhaDestino = wsDestino.Cells(Rows.Count, 1).End(xlUp).Row + 1
+
+    ' Localizar o primeiro arquivo com extensão .xlsx na pasta informada
+    Arquivo = Dir(PastaArquivos & "*.xlsx")
+
+    ' Percorrer todos os arquivos .xlsx encontrados na pasta
+    Do While Arquivo <> ""
+
+        ' Abrir o arquivo de origem para acessar seus dados
+        Set wbOrigem = Workbooks.Open(PastaArquivos & Arquivo)
+
+        ' Selecionar a primeira planilha do arquivo de origem
+        Set wsOrigem = wbOrigem.Sheets(1)
+
+        ' Identificar a última linha preenchida na coluna A da planilha de origem
+        UltimaLinha = wsOrigem.Cells(Rows.Count, 1).End(xlUp).Row
+
+        ' Copiar as linhas utilizadas, considerando os dados da coluna A
+        ' A cópia de EntireRow inclui todas as colunas dessas linhas
+        wsOrigem.Range("A1:A" & UltimaLinha).EntireRow.Copy
+
+        ' Colar os dados na planilha de destino, mantendo apenas os valores
+        wsDestino.Cells(LinhaDestino, 1).PasteSpecial Paste:=xlPasteValues
+
+        ' Fechar o arquivo de origem sem salvar alterações
+        wbOrigem.Close False
+
+        ' Atualizar a próxima linha disponível após a consolidação dos dados
+        LinhaDestino = wsDestino.Cells(Rows.Count, 1).End(xlUp).Row + 1
+
+        ' Localizar o próximo arquivo da pasta
+        Arquivo = Dir
+
+    Loop
+
+    ' Limpar o modo de cópia do Excel
+    Application.CutCopyMode = False
+
+    ' Exibir uma mensagem informando que o processo foi concluído
+    MsgBox "Unificação concluída!", vbInformation, "Sucesso!"
+
+End Sub
+End Sub
