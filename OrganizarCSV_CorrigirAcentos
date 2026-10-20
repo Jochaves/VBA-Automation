@@ -1,3 +1,12 @@
+Add VBA macro to organize CSV files and fix UTF-8 encoding issues
+
+- Split CSV data into columns using comma delimiter
+- Fix common UTF-8 character encoding issues (e.g. "ExploraÃ§Ã£o" → "Exploração")
+- Automate cleanup of analytics and CMS exports
+- Improve compatibility with CSV files opened directly in Excel
+
+
+
 Sub OrganizarCSV_CorrigirAcentos()
 
     Dim cel As Range
