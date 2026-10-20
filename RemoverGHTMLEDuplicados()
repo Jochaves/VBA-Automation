@@ -1,0 +1,79 @@
+Sub RemoverGHTMLEDuplicados()
+
+    ' ==========================================================
+    ' Macro: RemoverGHTMLEDuplicados
+    '
+    ' Objetivo:
+    ' 1. Percorrer todas as células preenchidas da coluna A.
+    ' 2. Localizar a primeira ocorrência de ".ghtml".
+    ' 3. Remover ".ghtml" e tudo o que vier após ele.
+    ' 4. Identificar URLs duplicadas após a limpeza.
+    ' 5. Manter apenas a primeira ocorrência de cada URL.
+    ' 6. Limpar as células que contenham URLs repetidas.
+    '
+    ' Exemplo:
+    ' Antes:
+    '   https://site.com/materia.ghtml
+    '   https://site.com/materia.ghtml?utm=abc
+    '
+    ' Depois:
+    '   https://site.com/materia
+    '   (célula vazia)
+    '
+    ' Autor: João Gabriel Santana Chaves
+    ' ==========================================================
+
+    Dim UltimaLinha As Long
+    Dim i As Long
+    Dim Posicao As Long
+    Dim Dic As Object
+    Dim URL As String
+
+    ' Cria um dicionário para armazenar URLs únicas
+    Set Dic = CreateObject("Scripting.Dictionary")
+
+    ' Identifica a última linha preenchida da coluna A
+    UltimaLinha = Cells(Rows.Count, "A").End(xlUp).Row
+
+    ' Percorre todas as linhas da coluna A
+    For i = 1 To UltimaLinha
+
+        ' Obtém o valor da célula removendo espaços extras
+        URL = Trim(Cells(i, "A").Value)
+
+        ' Procura a primeira ocorrência de ".ghtml"
+        Posicao = InStr(1, URL, ".ghtml", vbTextCompare)
+
+        ' Se encontrar ".ghtml",
+        ' mantém apenas o texto anterior a ele
+        If Posicao > 0 Then
+            URL = Left(URL, Posicao - 1)
+        End If
+
+        ' Ignora células vazias
+        If URL <> "" Then
+
+            ' Se a URL já existir no dicionário,
+            ' significa que é uma duplicata
+            If Dic.Exists(URL) Then
+
+                ' Limpa o conteúdo da célula duplicada
+                Cells(i, "A").ClearContents
+
+            Else
+
+                ' Adiciona a URL ao dicionário
+                Dic.Add URL, True
+
+                ' Atualiza a célula com a URL tratada
+                Cells(i, "A").Value = URL
+
+            End If
+
+        End If
+
+    Next i
+
+    MsgBox "Processo concluído!", vbInformation
+
+End Sub
