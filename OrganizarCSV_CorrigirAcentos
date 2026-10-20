@@ -1,0 +1,48 @@
+Sub OrganizarCSV_CorrigirAcentos()
+
+    Dim cel As Range
+
+    ' Separa a Coluna A em várias colunas usando vírgula
+    Columns("A:A").TextToColumns _
+        Destination:=Range("A1"), _
+        DataType:=xlDelimited, _
+        TextQualifier:=xlTextQualifierDoubleQuote, _
+        ConsecutiveDelimiter:=False, _
+        Tab:=False, _
+        Semicolon:=False, _
+        Comma:=True, _
+        Space:=False, _
+        Other:=False
+
+    ' Corrige caracteres acentuados
+    For Each cel In ActiveSheet.UsedRange
+
+        If VarType(cel.Value) = vbString Then
+
+            cel.Value = Replace(cel.Value, "Ã¡", "á")
+            cel.Value = Replace(cel.Value, "Ã ", "à")
+            cel.Value = Replace(cel.Value, "Ã¢", "â")
+            cel.Value = Replace(cel.Value, "Ã£", "ã")
+            cel.Value = Replace(cel.Value, "Ã©", "é")
+            cel.Value = Replace(cel.Value, "Ãª", "ê")
+            cel.Value = Replace(cel.Value, "Ã­", "í")
+            cel.Value = Replace(cel.Value, "Ã³", "ó")
+            cel.Value = Replace(cel.Value, "Ã´", "ô")
+            cel.Value = Replace(cel.Value, "Ãµ", "õ")
+            cel.Value = Replace(cel.Value, "Ãº", "ú")
+            cel.Value = Replace(cel.Value, "Ã§", "ç")
+
+            cel.Value = Replace(cel.Value, "Ã", "Á")
+            cel.Value = Replace(cel.Value, "Ã‰", "É")
+            cel.Value = Replace(cel.Value, "Ã", "Í")
+            cel.Value = Replace(cel.Value, "Ã“", "Ó")
+            cel.Value = Replace(cel.Value, "Ãš", "Ú")
+            cel.Value = Replace(cel.Value, "Ã‡", "Ç")
+
+        End If
+
+    Next cel
+
+    MsgBox "CSV organizado e acentos corrigidos!"
+
+End Sub
