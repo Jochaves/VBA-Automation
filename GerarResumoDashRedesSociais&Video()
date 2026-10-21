@@ -1,0 +1,56 @@
+Sub GerarResumoDashRedesSociais&Video()
+
+    Dim wsOrigem As Worksheet
+    Dim wsResumo As Worksheet
+    Dim ultimaLinha As Long
+    Dim qtdPosts As Long
+    Dim totalViews As Double
+    Dim totalEngajamento As Double
+    
+    Set wsOrigem = ActiveSheet
+    
+    ' Identifica a última linha preenchida da coluna A
+    ultimaLinha = wsOrigem.Cells(wsOrigem.Rows.Count, "A").End(xlUp).Row
+    
+    ' Quantidade de posts (A2 até última linha)
+    qtdPosts = Application.WorksheetFunction.CountA(wsOrigem.Range("A2:A" & ultimaLinha))
+    
+    ' Soma das Views (coluna L)
+    totalViews = Application.WorksheetFunction.Sum(wsOrigem.Range("L2:L" & ultimaLinha))
+    
+    ' Soma do Engajamento (coluna N)
+    totalEngajamento = Application.WorksheetFunction.Sum(wsOrigem.Range("N2:N" & ultimaLinha))
+    
+    ' Exclui a aba Resumo se já existir
+    Application.DisplayAlerts = False
+    On Error Resume Next
+    Worksheets("Resumo").Delete
+    On Error GoTo 0
+    Application.DisplayAlerts = True
+    
+    ' Cria nova aba
+    Set wsResumo = Worksheets.Add
+    wsResumo.Name = "Resumo"
+    
+    ' Preenche os resultados
+With wsResumo
+    .Range("A1").Value = "Métrica"
+    .Range("B1").Value = "Valor"
+
+    .Range("A2").Value = "Quantidade de Posts"
+    .Range("B2").Value = qtdPosts
+
+    .Range("A3").Value = "Views"
+    .Range("B3").Value = totalViews
+
+    .Range("A4").Value = "Engajamento"
+    .Range("B4").Value = totalEngajamento
+
+    ' Formatar números com separador de milhares
+    .Range("B2:B4").NumberFormat = "#,##0"
+
+    .Columns("A:B").AutoFit
+End With
+    MsgBox "Resumo criado com sucesso!", vbInformation
+
+End Sub
