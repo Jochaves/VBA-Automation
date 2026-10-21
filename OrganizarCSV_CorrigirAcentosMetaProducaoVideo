@@ -7,7 +7,7 @@ Add VBA macro to organize CSV files and fix UTF-8 encoding issues
 
 
 
-Sub OrganizarCSV_CorrigirAcentos()
+Sub OrganizarCSV_CorrigirAcentosMetaProducaoVideo()
 
     Dim cel As Range
 
