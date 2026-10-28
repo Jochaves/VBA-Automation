@@ -1,0 +1,139 @@
+' ============================================================
+' Macro: ExportarEleicoes2026
+' Objetivo: Copiar para uma nova aba os conteúdos relacionados
+' às eleições brasileiras de 2026 encontrados na coluna A.
+' ============================================================
+
+Sub ExportarEleicoes2026()
+
+    Dim wsOrigem As Worksheet
+    Dim wsDestino As Worksheet
+    Dim UltimaLinha As Long
+    Dim UltimaColuna As Long
+    Dim LinhaDestino As Long
+    Dim i As Long
+    Dim titulo As String
+
+    Set wsOrigem = ActiveSheet
+
+    ' Remove a aba caso já exista
+    On Error Resume Next
+    Application.DisplayAlerts = False
+    Worksheets("Eleicoes2026").Delete
+    Application.DisplayAlerts = True
+    On Error GoTo 0
+
+    ' Cria nova aba
+    Set wsDestino = Worksheets.Add(After:=Worksheets(Worksheets.Count))
+    wsDestino.Name = "Eleicoes2026"
+
+    ' Última linha da coluna A
+    UltimaLinha = wsOrigem.Cells(wsOrigem.Rows.Count, 1).End(xlUp).Row
+
+    ' Última coluna utilizada
+    UltimaColuna = wsOrigem.Cells(1, wsOrigem.Columns.Count).End(xlToLeft).Column
+
+    ' Copia cabeçalho
+    wsOrigem.Range( _
+        wsOrigem.Cells(1, 1), _
+        wsOrigem.Cells(1, UltimaColuna) _
+    ).Copy Destination:=wsDestino.Cells(1, 1)
+
+    LinhaDestino = 2
+
+    For i = 2 To UltimaLinha
+
+        titulo = LCase(Trim(wsOrigem.Cells(i, 1).Value))
+
+        If EhEleicao2026(titulo) Then
+
+            wsOrigem.Range( _
+                wsOrigem.Cells(i, 1), _
+                wsOrigem.Cells(i, UltimaColuna) _
+            ).Copy Destination:=wsDestino.Cells(LinhaDestino, 1)
+
+            LinhaDestino = LinhaDestino + 1
+
+        End If
+
+    Next i
+
+    wsDestino.Columns.AutoFit
+
+    MsgBox LinhaDestino - 2 & " conteúdos eleitorais encontrados.", vbInformation
+
+End Sub
+
+
+Function EhEleicao2026(titulo As String) As Boolean
+
+    titulo = LCase(titulo)
+
+    ' Exclusões
+    If InStr(titulo, "estados unidos") > 0 _
+    Or InStr(titulo, "eua") > 0 _
+    Or InStr(titulo, "trump") > 0 _
+    Or InStr(titulo, "biden") > 0 _
+    Or InStr(titulo, "kamala") > 0 _
+    Or InStr(titulo, "caixa") > 0 _
+    Or InStr(titulo, "petrobras") > 0 _
+    Or InStr(titulo, "vale") > 0 _
+    Or InStr(titulo, "itaú") > 0 _
+    Or InStr(titulo, "itau") > 0 _
+    Or InStr(titulo, "bradesco") > 0 _
+    Or InStr(titulo, "santander") > 0 _
+    Or InStr(titulo, "banco central") > 0 Then
+
+        EhEleicao2026 = False
+        Exit Function
+
+    End If
+
+    ' Inclusões
+    If InStr(titulo, "eleição") > 0 _
+    Or InStr(titulo, "eleições") > 0 _
+    Or InStr(titulo, "eleitoral") > 0 _
+    Or InStr(titulo, "eleitor") > 0 _
+    Or InStr(titulo, "campanha") > 0 _
+    Or InStr(titulo, "candidato") > 0 _
+    Or InStr(titulo, "candidata") > 0 _
+    Or InStr(titulo, "candidatura") > 0 _
+    Or InStr(titulo, "voto") > 0 _
+    Or InStr(titulo, "votos") > 0 _
+    Or InStr(titulo, "votação") > 0 _
+    Or InStr(titulo, "urna") > 0 _
+    Or InStr(titulo, "urnas") > 0 _
+    Or InStr(titulo, "debate") > 0 _
+    Or InStr(titulo, "sabatina") > 0 _
+    Or InStr(titulo, "tse") > 0 _
+    Or InStr(titulo, "tre") > 0 _
+    Or InStr(titulo, "intenção de voto") > 0 _
+    Or InStr(titulo, "primeiro turno") > 0 _
+    Or InStr(titulo, "segundo turno") > 0 _
+    Or InStr(titulo, "reeleição") > 0 _
+    Or InStr(titulo, "lula") > 0 _
+    Or InStr(titulo, "bolsonaro") > 0 _
+    Or InStr(titulo, "haddad") > 0 _
+    Or InStr(titulo, "tarcísio") > 0 _
+    Or InStr(titulo, "zema") > 0 _
+    Or InStr(titulo, "ciro") > 0 _
+    Or InStr(titulo, "caiado") > 0 _
+    Or InStr(titulo, "gleisi") > 0 _
+    Or InStr(titulo, "lira") > 0 _
+    Or InStr(titulo, "pacheco") > 0 _
+    Or InStr(titulo, "pt") > 0 _
+    Or InStr(titulo, "pl") > 0 _
+    Or InStr(titulo, "psdb") > 0 _
+    Or InStr(titulo, "psb") > 0 _
+    Or InStr(titulo, "mdb") > 0 _
+    Or InStr(titulo, "psol") > 0 _
+    Or InStr(titulo, "republicanos") > 0 _
+    Or InStr(titulo, "união brasil") > 0 _
+    Or InStr(titulo, "2026") > 0 Then
+
+        EhEleicao2026 = True
+    Else
+        EhEleicao2026 = False
+    End If
+
+End Function
