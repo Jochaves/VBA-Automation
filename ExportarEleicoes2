@@ -1,0 +1,155 @@
+' ============================================================
+' Macro: ExportarEleicoes2
+'
+' Objetivo:
+' Identificar e exportar conteúdos relacionados às eleições
+' brasileiras para uma nova aba da planilha.
+'
+' Funcionamento:
+' - Analisa os títulos presentes na coluna A da planilha ativa.
+' - Cria automaticamente uma aba chamada "Eleicoes2026".
+' - Remove a aba anterior, caso já exista.
+' - Copia o cabeçalho da base original.
+' - Percorre os títulos da linha 2 até a última linha preenchida.
+' - Aplica regras de exclusão para evitar falsos positivos,
+'   como conteúdos sobre eleições internacionais, bancos,
+'   empresas e instituições sem relação eleitoral direta.
+' - Busca palavras-chave relacionadas a:
+'       • Eleições e processos eleitorais
+'       • Votação e urnas
+'       • Candidatos e campanhas
+'       • Lideranças políticas
+'       • Partidos políticos
+' - Quando encontra uma correspondência, copia a linha
+'   completa (todas as colunas) para a aba de destino.
+'
+' Resultado:
+' Gera uma base consolidada apenas com conteúdos
+' potencialmente relacionados às Eleições 2026,
+' preservando todas as informações da linha original.
+'
+' Aplicação:
+' Utilizada para acelerar análises editoriais,
+' levantamentos de cobertura eleitoral e criação
+' de bases temáticas para relatórios e dashboards.
+' ============================================================
+
+Sub ExportarEleicoes2()
+
+    Dim wsOrigem As Worksheet
+    Dim wsDestino As Worksheet
+    Dim UltimaLinha As Long
+    Dim UltimaColuna As Long
+    Dim LinhaDestino As Long
+    Dim i As Long
+    Dim titulo As String
+    Dim Encontrou As Boolean
+
+    Set wsOrigem = ActiveSheet
+
+    ' Exclui a aba caso já exista
+    On Error Resume Next
+    Application.DisplayAlerts = False
+    Worksheets("Eleicoes2026").Delete
+    Application.DisplayAlerts = True
+    On Error GoTo 0
+
+    ' Cria nova aba
+    Set wsDestino = Worksheets.Add
+    wsDestino.Name = "Eleicoes2026"
+
+    ' Última linha da coluna A
+    UltimaLinha = wsOrigem.Range("A" & wsOrigem.Rows.Count).End(xlUp).Row
+
+    ' Última coluna utilizada
+    UltimaColuna = wsOrigem.Cells(1, Columns.Count).End(xlToLeft).Column
+
+    ' Copia cabeçalho
+    wsOrigem.Range(wsOrigem.Cells(1, 1), _
+                   wsOrigem.Cells(1, UltimaColuna)).Copy _
+                   Destination:=wsDestino.Cells(1, 1)
+
+    LinhaDestino = 2
+
+    For i = 2 To UltimaLinha
+
+        titulo = LCase(Trim(wsOrigem.Cells(i, 1).Value))
+        Encontrou = False
+
+        ' Exclusões
+        If InStr(titulo, "estados unidos") > 0 Then GoTo ProximaLinha
+        If InStr(titulo, "eua") > 0 Then GoTo ProximaLinha
+        If InStr(titulo, "trump") > 0 Then GoTo ProximaLinha
+        If InStr(titulo, "biden") > 0 Then GoTo ProximaLinha
+        If InStr(titulo, "kamala") > 0 Then GoTo ProximaLinha
+        If InStr(titulo, "caixa") > 0 Then GoTo ProximaLinha
+        If InStr(titulo, "petrobras") > 0 Then GoTo ProximaLinha
+        If InStr(titulo, "vale") > 0 Then GoTo ProximaLinha
+        If InStr(titulo, "itaú") > 0 Then GoTo ProximaLinha
+        If InStr(titulo, "itau") > 0 Then GoTo ProximaLinha
+        If InStr(titulo, "bradesco") > 0 Then GoTo ProximaLinha
+        If InStr(titulo, "santander") > 0 Then GoTo ProximaLinha
+        If InStr(titulo, "banco central") > 0 Then GoTo ProximaLinha
+
+        ' Eleições
+        If InStr(titulo, "eleição") > 0 Then Encontrou = True
+        If InStr(titulo, "eleições") > 0 Then Encontrou = True
+        If InStr(titulo, "eleitoral") > 0 Then Encontrou = True
+        If InStr(titulo, "eleitor") > 0 Then Encontrou = True
+        If InStr(titulo, "campanha") > 0 Then Encontrou = True
+        If InStr(titulo, "candidato") > 0 Then Encontrou = True
+        If InStr(titulo, "candidata") > 0 Then Encontrou = True
+        If InStr(titulo, "candidatura") > 0 Then Encontrou = True
+
+        ' Votação
+        If InStr(titulo, "voto") > 0 Then Encontrou = True
+        If InStr(titulo, "votos") > 0 Then Encontrou = True
+        If InStr(titulo, "votação") > 0 Then Encontrou = True
+        If InStr(titulo, "urna") > 0 Then Encontrou = True
+        If InStr(titulo, "urnas") > 0 Then Encontrou = True
+        If InStr(titulo, "debate") > 0 Then Encontrou = True
+        If InStr(titulo, "sabatina") > 0 Then Encontrou = True
+        If InStr(titulo, "tse") > 0 Then Encontrou = True
+        If InStr(titulo, "tre") > 0 Then Encontrou = True
+        If InStr(titulo, "primeiro turno") > 0 Then Encontrou = True
+        If InStr(titulo, "segundo turno") > 0 Then Encontrou = True
+
+        ' Políticos
+        If InStr(titulo, "lula") > 0 Then Encontrou = True
+        If InStr(titulo, "bolsonaro") > 0 Then Encontrou = True
+        If InStr(titulo, "haddad") > 0 Then Encontrou = True
+        If InStr(titulo, "tarcísio") > 0 Then Encontrou = True
+        If InStr(titulo, "zema") > 0 Then Encontrou = True
+        If InStr(titulo, "ciro") > 0 Then Encontrou = True
+        If InStr(titulo, "caiado") > 0 Then Encontrou = True
+        If InStr(titulo, "gleisi") > 0 Then Encontrou = True
+        If InStr(titulo, "lira") > 0 Then Encontrou = True
+        If InStr(titulo, "pacheco") > 0 Then Encontrou = True
+
+        ' Partidos
+        If InStr(titulo, "psdb") > 0 Then Encontrou = True
+        If InStr(titulo, "psb") > 0 Then Encontrou = True
+        If InStr(titulo, "mdb") > 0 Then Encontrou = True
+        If InStr(titulo, "psol") > 0 Then Encontrou = True
+        If InStr(titulo, "republicanos") > 0 Then Encontrou = True
+        If InStr(titulo, "união brasil") > 0 Then Encontrou = True
+
+        If Encontrou Then
+
+            wsOrigem.Range( _
+                wsOrigem.Cells(i, 1), _
+                wsOrigem.Cells(i, UltimaColuna) _
+            ).Copy Destination:=wsDestino.Cells(LinhaDestino, 1)
+
+            LinhaDestino = LinhaDestino + 1
+
+        End If
+
+ProximaLinha:
+    Next i
+
+    wsDestino.Columns.AutoFit
+
+    MsgBox LinhaDestino - 2 & " conteúdos encontrados.", vbInformation
+
+End Sub
